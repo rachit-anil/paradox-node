@@ -6,7 +6,7 @@ dotenv.config();
 const app = express();
 
 // Custom CORS middleware
-const allowedOrigins = ["http://localhost:4200", "http://projectparadox.in"];
+const allowedOrigins = ["http://localhost:4200", "https://projectparadox.in"];
 app.use(
   cors({
     origin: allowedOrigins, // Allow only this origin
