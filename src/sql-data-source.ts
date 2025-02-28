@@ -1,5 +1,5 @@
 // src/data-source.ts
-import { DataSource } from "typeorm";
+import { DataSource, createConnection } from "typeorm";
 import { User } from "./entity/User"; // Import your entity
 
 export const AppDataSource = new DataSource({
@@ -17,7 +17,13 @@ export const AppDataSource = new DataSource({
 });
 
 async function main() {
-    await AppDataSource.initialize();
+    await AppDataSource.initialize().then(async () => {
+        console.log("Database connection established!");
+
+        // Synchronize the schema (create tables if they don't exist)
+        await AppDataSource.synchronize();
+        console.log("Tables created successfully!");
+    });
     console.log("Data Source has been initialized!");
 }
 
