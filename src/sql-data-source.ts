@@ -14,6 +14,9 @@ export const AppDataSource = new DataSource({
     entities: [User], // Add your entities here
     migrations: [], // Add migrations if needed
     subscribers: [], // Add subscribers if needed
+    extra: {
+        connectTimeout: 1000000, // Increase connection timeout to 100 seconds
+    },
 });
 
 async function main() {
