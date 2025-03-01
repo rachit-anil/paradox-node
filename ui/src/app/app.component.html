@@ -1,0 +1,18 @@
+<!--version 2-->
+@if (showSpinner) {
+	<div class="spinner-container">
+		<div class="spinner-and-text">
+			<mat-progress-spinner mode="indeterminate">
+			</mat-progress-spinner>
+			<div class="spinner-text">{{ spinnerText }} </div>
+		</div>
+	</div>
+}
+@if (showProgress) {
+	<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+<app-navbar></app-navbar>
+@if (showRouter) {
+	<router-outlet></router-outlet>
+}
+<!--<button (click)="fetchPublicData()">Public data</button>-->

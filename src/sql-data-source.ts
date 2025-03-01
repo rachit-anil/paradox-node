@@ -31,3 +31,18 @@ async function main() {
 }
 
 main().catch((error) => console.log(error));
+
+// Handle clean shutdown
+process.on("SIGINT", async () => {
+    console.log("Shutting down server...");
+    await AppDataSource.destroy();
+    console.log("Database connection closed.");
+    process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+    console.log("Shutting down server...");
+    await AppDataSource.destroy();
+    console.log("Database connection closed.");
+    process.exit(0);
+});

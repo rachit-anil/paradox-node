@@ -1,0 +1,24 @@
+.spinner-container {
+	position: fixed; /* Fix the spinner container to the viewport */
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent overlay */
+	z-index: 999; /* Ensure it's above other content */
+	display: flex; /* Use flex to center the content */
+	justify-content: center;
+	align-items: center;
+
+	.spinner-and-text {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.mat-mdc-progress-spinner {
+			width: 60px !important;
+			height: 60px !important;
+			margin-right: 12px;
+		}
+	}
+}

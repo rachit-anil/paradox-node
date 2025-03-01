@@ -1,0 +1,35 @@
+@if (!isUserAuthenticated) {
+<div class="login-signup-container">
+  <div class="forms">
+    @if (selectedComponent === ''){
+    <h6>Choose your poison</h6>
+    <button mat-flat-button (click)="selectedComponent = 'login'">
+      Log in
+    </button>
+    <button mat-flat-button (click)="selectedComponent = 'signup'">
+      Sign up
+    </button>
+    } @if (selectedComponent === 'login'){
+    <app-login></app-login>
+    } @if (selectedComponent === 'signup'){
+    <app-sign-up></app-sign-up>
+    }
+
+    <div class="footer">
+      @if (selectedComponent === 'login'){
+      <div class="footer-component">
+        <div>Don't have an account?</div>
+        <button mat-button (click)="selectedComponent = 'signup'">
+          Sign up
+        </button>
+      </div>
+      } @if (selectedComponent === 'signup'){
+      <div class="footer-component">
+        <div>Already have an account ?</div>
+        <button mat-button (click)="selectedComponent = 'login'">Log in</button>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}

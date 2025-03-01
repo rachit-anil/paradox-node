@@ -1,0 +1,38 @@
+<form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="login-form">
+  <h6 class="login-text">Sign Up</h6>
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input type="text" matInput [formControl]="name" />
+    @if (name.hasError('required')) {
+    <mat-error>Name is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Mobile</mat-label>
+    <input type="number" matInput [formControl]="mobile" />
+    @if (mobile.hasError('required')) {
+    <mat-error>Mobile number is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input type="email" matInput [formControl]="username" />
+    @if (username.hasError('email') && !username.hasError('required')) {
+    <mat-error>Please enter a valid email address</mat-error>
+    } @if (username.hasError('required')) {
+    <mat-error>Email is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Password</mat-label>
+    <input type="password" matInput [formControl]="password" />
+    @if (password.hasError('minLength') && !password.hasError('required')) {
+    <mat-error>Please enter a valid password</mat-error>
+    } @if (password.hasError('required')) {
+    <mat-error>Password is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+  <button mat-raised-button type="submit" [disabled]="signUpForm.invalid">
+    Signup
+  </button>
+</form>

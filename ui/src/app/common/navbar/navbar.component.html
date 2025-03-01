@@ -1,0 +1,23 @@
+<nav>
+  <div class="links">
+    <div><button mat-button [routerLink]="['']">Home</button></div>
+    <div>
+      <button
+        *ngIf="isUserAuthenticated"
+        mat-button
+        [routerLink]="['/gallery']"
+      >
+        Gallery
+      </button>
+    </div>
+  </div>
+
+  <div class="login-logout">
+    <button *ngIf="!isUserAuthenticated" mat-button [routerLink]="['/login']">
+      Login
+    </button>
+    <button *ngIf="isUserAuthenticated" mat-button (click)="logout()">
+      Logout
+    </button>
+  </div>
+</nav>

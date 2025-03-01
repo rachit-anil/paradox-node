@@ -5,10 +5,14 @@ import cors from "cors";
 import { BaseRoute } from './routes/index';
 import https from 'https'; // Import the HTTPS module
 import fs from 'fs';
+import path from "node:path";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+
+// Serve static files from the "ui/dist/browser" directory
+app.use(express.static(path.join(__dirname, '..', 'ui', 'dist', 'browser')));
 
 // Custom CORS middleware
 const allowedOrigins = ["http://localhost:4200", "https://projectparadox.in"];
@@ -34,6 +38,12 @@ if(process.env.PRODUCTION){
 
 
 const route = new BaseRoute();
+
+// Serve index.html for all routes (for SPAs like Angular/React)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'ui', 'dist', 'browser', 'index.html'));
+});
+
 app.use('/', route.router);
 
 
