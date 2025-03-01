@@ -1,5 +1,6 @@
 import express from 'express';
 import {AuthService} from '../services/auth.service';
+import bcrypt from 'bcrypt';
 
 export class AuthRoute {
     private router;
@@ -8,9 +9,8 @@ export class AuthRoute {
     constructor() {
         this.router = express.Router();
         this.authService = new AuthService();
-        this.router.get('/login', this.login.bind(this));
+        this.router.post('/login', this.login.bind(this));
         this.router.post('/signup', this.signup.bind(this));
-
     }
 
     async signup(req: express.Request, res: express.Response) {
@@ -40,8 +40,9 @@ export class AuthRoute {
                 return response.status(404).json({ error: 'User not found' });
             }
 
+           const isPasswordMatching = await bcrypt.compare(password, user.password);
             // Compare passwords (use bcrypt for hashed passwords)
-            if (user.password !== password) {
+            if (!isPasswordMatching) {
                 return response.status(401).json({ error: 'Invalid credentials' });
             }
 

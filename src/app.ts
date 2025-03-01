@@ -5,28 +5,6 @@ import cors from "cors";
 import { BaseRoute } from './routes/index';
 import https from 'https'; // Import the HTTPS module
 import fs from 'fs';
-import mysql from 'mysql2';
-
-// Create a connection pool
-// const pool = mysql.createPool({
-//     host: 'localhost',
-//     user: 'rachitanil',
-//     password: 'root',
-//     database: 'spring',
-//     waitForConnections: true,
-//     connectionLimit: 10,
-//     queueLimit: 0
-// });
-//
-// // Get a connection from the pool
-// pool.getConnection((err, connection) => {
-//     if (err) {
-//         console.error('Error connecting to the database:', err);
-//         return;
-//     }
-//     console.log('Connected to the database!');
-//     connection.release(); // Release the connection back to the pool
-// });
 
 dotenv.config();
 const app = express();
@@ -45,22 +23,31 @@ app.use(
 );
 
 
-// Load SSL/TLS certificates
-const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/privkey.pem'), // Private key
-    cert: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/fullchain.pem'), // Full certificate chain
-};
+let options = {}; // not the recommended approach as the https certs are readable by node application , may nginx is the way to go
+if(process.env.PRODUCTION){
+    // Load SSL/TLS certificates
+    options = {
+        key: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/privkey.pem'), // Private key
+        cert: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/fullchain.pem'), // Full certificate chain
+    };
+}
+
 
 const route = new BaseRoute();
 app.use('/', route.router);
 
 
 const port = process.env.PORT || 8080;
-// app.listen(port, () => {
-//   return console.log(`Express is listening at http://localhost:${port}`);
-// });
 
-// Create an HTTPS server
-https.createServer(options, app).listen(port, () => {
-    console.log(`HTTPS is running at ${port}`);
-});
+if(!process.env.PRODUCTION){
+    app.listen(8080, () => {
+        return console.log(`Express is listening at http://localhost:${port}`);
+    });
+}else {
+    // Create an HTTPS server
+    https.createServer(options, app).listen(443, () => {
+        console.log(`HTTPS is running at ${port}`);
+    });
+}
+
+
