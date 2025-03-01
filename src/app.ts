@@ -3,6 +3,8 @@ import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import { BaseRoute } from './routes/index';
+import https from 'https'; // Import the HTTPS module
+import fs from 'fs';
 import mysql from 'mysql2';
 
 // Create a connection pool
@@ -43,11 +45,22 @@ app.use(
 );
 
 
+// Load SSL/TLS certificates
+const options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/privkey.pem'), // Private key
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.projectparadox.in/fullchain.pem'), // Full certificate chain
+};
+
 const route = new BaseRoute();
 app.use('/', route.router);
 
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
+// app.listen(port, () => {
+//   return console.log(`Express is listening at http://localhost:${port}`);
+// });
+
+// Create an HTTPS server
+https.createServer(options, app).listen(port, () => {
+    console.log(`HTTPS is running at ${port}`);
 });
