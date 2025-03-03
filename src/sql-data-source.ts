@@ -4,7 +4,7 @@ import { User } from "./entity/User"; // Import your entity
 
 export const AppDataSource = new DataSource({
     type: "mysql", // or 'postgres', 'sqlite', etc.
-    host: "localhost",
+    host: "mysql",
     port: 3306,
     username: "rachitanil",
     password: "root",
@@ -30,7 +30,14 @@ async function main() {
     console.log("Data Source has been initialized!");
 }
 
-main().catch((error) => console.log(error));
+main()
+    .then(() => {
+    console.log("Data Source has been initialized!");
+})
+    .catch((error) => {
+        console.error("Error during Data Source initialization:");
+        console.log(error)
+    });
 
 // Handle clean shutdown
 process.on("SIGINT", async () => {

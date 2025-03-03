@@ -13,17 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'v20.17.0'  # Change to your Node.js version
-
-      - name: Install dependencies and build frontend
-        run: |
-          cd ui
-          npm install
-          npm run build --prod
-
       - name: Copy code to EC2
         uses: appleboy/scp-action@master
         with:
@@ -33,7 +22,7 @@ jobs:
           source: "."
           target: "/home/ec2-user/app"
 
-      - name: Install Docker, npm, and PM2 on EC2
+      - name: Install Docker and Docker Compose on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -48,36 +37,19 @@ jobs:
               sudo usermod -a -G docker ec2-user
             fi
 
-            # Install npm (if not already installed with Node.js)
-            if ! command -v npm &> /dev/null; then
-              curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -
-              sudo yum install -y nodejs
+            # Install Docker Compose
+            if ! command -v docker-compose &> /dev/null; then
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
             fi
 
-            # Install PM2 globally
-            if ! command -v pm2 &> /dev/null; then
-              sudo npm install -g pm2
-            fi
-
-      - name: Stop and start SQL container
+      - name: Deploy using Docker Compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker stop sql_container || true
-            docker rm sql_container || true
-            docker run -d --name sql_container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=spring -e MYSQL_USER=rachitanil -e MYSQL_PASSWORD=root -p 3306:3306 mysql:latest
-
-      - name: Stop and start Node.js server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            pm2 stop app || true
             cd /home/ec2-user/app
-            npm install
-            pm2 start src/app.ts --name app
+            docker-compose down
+            docker-compose up -d
