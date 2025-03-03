@@ -2,10 +2,10 @@
 import { DataSource } from "typeorm";
 import { User } from "./entity/User"; // Import your entity
 
-const dbHost = process.env.DB_HOST || "mysql";
-const dbUsername = process.env.DB_USERNAME || "rachitanil";
-const dbPassword = process.env.DB_PASSWORD || "root";
-const sqlPort = Number(process.env.SQL_PORT || 3306) ;
+const dbHost = process.env.DB_HOST;
+const dbUsername = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+const sqlPort = Number(process.env.SQL_PORT);
 
 export const AppDataSource = new DataSource({
     type: "mysql", // or 'postgres', 'sqlite', etc.
