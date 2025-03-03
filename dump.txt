@@ -5,16 +5,16 @@ Question 1: Which env variables/ secrets/ keys should go where ?
 For example: How will Docker handle/read the environment variables meant to be used for Node Application .. .env file ?
 
 For example : SQL credentials ?
-
-
-
--------------------------------------------------------------------------------------------------------------------------
+How to build app with NOdeenv as production .. ?
 Git Actions .
 What are environment variables in git actions used for ?
 
+-------------------------------------------------------------------------------------------------------------------------
+
+What is LRU cache ?
 
 -------------------------------------------------------------------------------------------------------------------------
-How to build app with NOdeenv as production .. ?
+
 
 -------------------------------------------------------------------------------------------------------------------------
 

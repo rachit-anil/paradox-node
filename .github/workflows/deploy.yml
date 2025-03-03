@@ -34,7 +34,6 @@ jobs:
             SQL_PORT=${{ secrets.SQL_PORT }}
             DB_HOST=${{ secrets.DB_HOST }}
             DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             NODE_ENV=production
             EOT
@@ -74,5 +73,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/app
-            docker-compose down
+            docker-compose down -v
+            # Remove any unused Docker images (cleaning up old images)
+            docker image prune -af
             docker-compose up -d --build
