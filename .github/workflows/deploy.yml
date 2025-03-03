@@ -22,13 +22,19 @@ jobs:
           source: "."
           target: "/home/ec2-user/app"
 
-      - name: Install Docker and Docker Compose on EC2
+      - name: Install NgInx, Docker and Docker Compose on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # Install Https and NgInx
+            # Make the script executable
+            chmod +x /home/ec2-user/app/setup.sh
+            # Execute the script
+            /home/ec2-user/app/setup.sh
+            
             # Install Docker
             if ! command -v docker &> /dev/null; then
               sudo yum update -y

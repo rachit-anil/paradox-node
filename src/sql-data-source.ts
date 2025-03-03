@@ -1,5 +1,5 @@
 // src/data-source.ts
-import { DataSource, createConnection } from "typeorm";
+import { DataSource } from "typeorm";
 import { User } from "./entity/User"; // Import your entity
 
 export const AppDataSource = new DataSource({
