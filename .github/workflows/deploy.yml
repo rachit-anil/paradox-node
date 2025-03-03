@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    environment: development
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,6 +21,23 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "/home/ec2-user/app"
+
+      - name: Create .env file on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOT > /home/ec2-user/app/.env
+            PORT=${{ secrets.PORT }}
+            SQL_PORT=${{ secrets.SQL_PORT }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            NODE_ENV=production
+            EOT
 
       - name: Install NgInx, Docker and Docker Compose on EC2
         uses: appleboy/ssh-action@master
