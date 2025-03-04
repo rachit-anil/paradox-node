@@ -35,7 +35,7 @@ app.get('*', (req, res) => {
 
 app.use('/', route.router);
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8090;
 
 // On docker also we are running it on 8080
 app.listen(port, () => {

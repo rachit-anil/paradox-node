@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: sql_container
+    container_name: sql-container1
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: spring
@@ -34,7 +34,7 @@ services:
       - app-network
     environment:
       NODE_ENV: production
-      DB_HOST: sql_container
+      DB_HOST: mysql
       DB_USER: rachitanil
       DB_PASSWORD: root
       DB_NAME: sql_container

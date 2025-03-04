@@ -2,17 +2,18 @@
 import { DataSource } from "typeorm";
 import { User } from "./entity/User"; // Import your entity
 
-const dbHost = process.env.DB_HOST;
-const dbUsername = process.env.DB_USERNAME;
+const dbHost = process.env.DB_HOST || 'localhost';
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const sqlPort = Number(process.env.SQL_PORT);
 
 export const AppDataSource = new DataSource({
     type: "mysql", // or 'postgres', 'sqlite', etc.
     host: dbHost,
-    port: sqlPort,
-    username: dbUsername,
-    password: dbPassword,
+    port: 3306,
+    username: "rachitanil",
+    password: "root",
     database: "spring",
     synchronize: true, // Automatically create database schema (for development only)
     logging: true, // Enable logging
