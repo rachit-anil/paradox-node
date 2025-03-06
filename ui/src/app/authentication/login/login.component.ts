@@ -15,6 +15,7 @@ import { AuthService } from "../../services/auth.service";
 import {SpinnerService} from "../../services/spinner.service";
 import {finalize} from "rxjs";
 import {SnackbarService} from "../../services/snackbar.service";
+import {JWTService} from "../../services/jwt.service";
 
 @Component({
   selector: "app-login",
@@ -38,7 +39,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private spinnerService: SpinnerService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private jwtService: JWTService,
   ) {}
 
   ngOnInit() {
@@ -67,8 +69,9 @@ export class LoginComponent {
       .pipe(
         finalize(()=>this.spinnerService.hideSpinner())
       )
-      .subscribe(()=>{
+      .subscribe((response: any)=>{
         this.authService.setUserAuthenticationStatus(true);
+        this.jwtService.setJwtToken(response.jwtToken);
         this.router.navigate([""]);
         this.snackbarService.openSnackBar("Login successful","Close");
       },

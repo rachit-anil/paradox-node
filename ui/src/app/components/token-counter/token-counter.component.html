@@ -1,0 +1,6 @@
+<div class="counter" >
+    <span>JWT </span>
+    <div *ngIf="token && remainingTime">{{ formatTime(remainingTime) }}</div>
+    <div  class="expired" *ngIf="token && !remainingTime">Expired</div>
+    <div *ngIf="!token">No token</div>
+</div>

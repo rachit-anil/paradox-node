@@ -1,10 +1,11 @@
 import { bootstrapApplication } from "@angular/platform-browser";
 import { appConfig } from "./app/app.config";
 import { AppComponent } from "./app/app.component";
-import { provideHttpClient } from "@angular/common/http";
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi} from "@angular/common/http";
 import { RouterModule, provideRouter } from "@angular/router";
 import { AuthGuard } from "./app/guards/auth.guard";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import {AuthInterceptor} from "./app/interceptors/auth-interceptor";
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -33,5 +34,7 @@ bootstrapApplication(AppComponent, {
       { path: "**", redirectTo: "home", pathMatch: "full" },
     ]),
     provideAnimationsAsync(),
+    provideHttpClient(withInterceptorsFromDi()),
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],
 });

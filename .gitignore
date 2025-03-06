@@ -5,3 +5,5 @@
 /ui/dist
 .env
 /dist
+/ui/.idea/*
+ui/.idea/modules.xml

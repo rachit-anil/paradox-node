@@ -1,14 +1,17 @@
-import "reflect-metadata"; // Add this line at the top
+import "reflect-metadata";
 import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import { BaseRoute } from './routes/index';
-import https from 'https'; // Import the HTTPS module
-import fs from 'fs';
 import path from "node:path";
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 const app = express();
+
+// Use cookie-parser middleware
+app.use(cookieParser());
+
 app.use(express.json());
 
 // Serve static files from the "ui/dist/browser" directory
@@ -29,13 +32,13 @@ app.use(
 const route = new BaseRoute();
 
 // Serve index.html for all routes (for SPAs like Angular/React)
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'ui', 'dist', 'browser', 'index.html'));
 });
 
 app.use('/', route.router);
 
-const port = process.env.PORT || 8090;
+const port = process.env.PORT || 8080;
 
 // On docker also we are running it on 8080
 app.listen(port, () => {
