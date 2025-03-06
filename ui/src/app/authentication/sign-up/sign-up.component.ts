@@ -15,6 +15,7 @@ import {SnackbarService} from "../../services/snackbar.service";
 import {AuthService} from "../../services/auth.service";
 import {finalize} from "rxjs";
 import {SpinnerService} from "../../services/spinner.service";
+import {JWTService} from "../../services/jwt.service";
 
 @Component({
     selector: "app-sign-up",
@@ -38,6 +39,7 @@ export class SignUpComponent {
         private snackbarService: SnackbarService,
         private authService: AuthService,
         private spinnerService: SpinnerService,
+        private jwtService: JWTService,
     ) {
     }
 
@@ -102,10 +104,11 @@ export class SignUpComponent {
             )
             .subscribe(
                 {
-                    next: () => {
+                    next: (response: any) => {
                         this.authService.setUserAuthenticationStatus(true);
+                        this.jwtService.setJwtToken(response.jwtToken);
                         this.router.navigate([""]);
-                        this.snackbarService.openSnackBar("Login successful", "Close");
+                        this.snackbarService.openSnackBar("Login successful","Close");
                     },
                     error: error => {
                         this.snackbarService.openSnackBar("Log in unsuccessful", "Close")

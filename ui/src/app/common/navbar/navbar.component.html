@@ -13,6 +13,9 @@
   </div>
 
   <div class="login-logout">
+      <div>
+          <app-token-counter></app-token-counter>
+      </div>
     <button *ngIf="!isUserAuthenticated" mat-button [routerLink]="['/login']">
       Login
     </button>

@@ -3,6 +3,9 @@ import {Injectable} from "@angular/core";
 import {ProgressService} from "./progress.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import { environment } from '../../environments/environment';
+import {JWTService} from "./jwt.service";
+import {Router} from "@angular/router";
+import {SnackbarService} from "./snackbar.service";
 
 const apiUrl = `${environment.baseUrl}`;
 
@@ -15,7 +18,10 @@ export class AuthService {
 
     constructor(
         private http: HttpClient,
-        private progressService: ProgressService
+        private progressService: ProgressService,
+        private snackbarService: SnackbarService,
+        private jwtService: JWTService,
+        private router: Router
     ) {
     }
 
@@ -32,16 +38,11 @@ export class AuthService {
         return this.authenticationStatus;
     }
 
-    checkJsessionValidity() {
-        return this.http.get(`${apiUrl}/checkSessionValidity`, {
-            withCredentials: true,
-        });
-    }
-
     logoutUser() {
-        return this.http.get(`${apiUrl}/logoutUser`, {
-            withCredentials: true,
-        });
+        this.jwtService.clearToken();
+        this.router.navigate(['/login']);
+        this.snackbarService.openSnackBar('Token Expired. Please login');
+        this.setUserAuthenticationStatus(false);
     }
 
     loginUser(username: string, password: string) {
@@ -50,18 +51,19 @@ export class AuthService {
         const headers = new HttpHeaders({
             Authorization: basicAuthHeader,
         });
-        // return this.http
-        //     .get(`${apiUrl}/auth/login`, {
-        //         headers,
-        //         withCredentials: true,
-        //     });
-
 
         return this.http
-            .post(`${apiUrl}/auth/login`,{username, password});
+            .post(`${apiUrl}/auth/login`,{username, password},{withCredentials:true});
     }
 
     registerUser(registerData: any) {
         return this.http.post(`${apiUrl}/auth/signup`, registerData);
+    }
+
+    gallery(){
+    }
+
+    refreshToken(){
+        return this.http.get(`${apiUrl}/auth/refreshToken`,{withCredentials:true});
     }
 }

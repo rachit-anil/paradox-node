@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import {
+  Router,
   RouterModule,
   RouterOutlet,
 } from "@angular/router";
@@ -12,6 +13,7 @@ import { AuthService } from "./services/auth.service";
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {SpinnerService} from "./services/spinner.service";
+import {JWTService} from "./services/jwt.service";
 
 @Component({
   selector: "app-root",
@@ -39,15 +41,21 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private progressService: ProgressService,
     private _snackBar: MatSnackBar,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private jwtService: JWTService,
+    private router: Router,
   ) {}
 
-  async fetchPublicData(){
-    await fetch("http://api.projectparadox.in:8080/auth/public").then((response: Response) => {})
-    console.log("data fetched");
+  ngOnInit() {
+    this.checkJwtValidity();
   }
 
-  ngOnInit() {
+  checkJwtValidity(){
+    if(this.jwtService.isTokenValid()){
+      this.authService.setUserAuthenticationStatus(true);
+    }else{
+      this.router.navigate(['login']);
+    }
     // this.spinnerService.spinnerStatus.subscribe(spinnerData => {
     //   this.showSpinner = spinnerData.showSpinner;
     //   this.spinnerText = spinnerData.message || '';
@@ -56,7 +64,7 @@ export class AppComponent implements OnInit {
     //   (showProgress: boolean) => (this.showProgress = showProgress)
     // );
     // this.authService
-    //   .checkJsessionValidity()
+    //   .checkJwtValidity()
     //   .pipe(
     //     finalize(() => {
     //       this.showRouter = true;
@@ -74,7 +82,6 @@ export class AppComponent implements OnInit {
     //     }
     //   );
   }
-
 
 }
 
