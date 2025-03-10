@@ -1,7 +1,7 @@
 import express, {response} from 'express';
 import {AuthService} from '../services/auth.service';
 import bcrypt from 'bcrypt';
-import {JwtService} from "../services/jwt.service";
+import {JsonWebTokenService} from "../services/json-web-token.service";
 
 const JWT_TOKEN_VALIDITY = 2000;
 const REFRESH_TOKEN_VALIDITY = 2000000;
@@ -24,6 +24,7 @@ export class AuthRoute {
     }
 
     async refreshToken(req: express.Request, res: express.Response) {
+        console.log(process.env.NODE_ENV);
         // await this.delay(300);
         // extract cookies
         const refreshTokenCookie = req.cookies.refreshToken || '';
@@ -33,18 +34,18 @@ export class AuthRoute {
         }
 
         // validate refresh token cookie - refresh token should be stored in data base ? How should they be stored ?
-        const isRefreshTokenVerified = await JwtService.verifyToken(refreshTokenCookie);
+        const isRefreshTokenVerified = await JsonWebTokenService.verifyToken(refreshTokenCookie);
 
         // if validated.. generate another jwt and return
         if (isRefreshTokenVerified) {
-            const userInfo = JwtService.decodeToken(refreshTokenCookie);
-            const jwtToken = await JwtService.generateToken({name: userInfo.username}, JWT_TOKEN_VALIDITY);  // new access token
+            const userInfo = JsonWebTokenService.decodeToken(refreshTokenCookie);
+            const jwtToken = await JsonWebTokenService.generateToken({name: userInfo.username}, JWT_TOKEN_VALIDITY);  // new access token
             return res.status(200).send({jwtToken});
         } else {
             // if not valid delete cookie from the response
             res.cookie('refreshToken', '', {
                 httpOnly: true,
-                secure: false, // Set to true in production for HTTPS
+                secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
                 sameSite: 'strict', // Or 'Lax' depending on your use case
                 maxAge: 1000, // 100 seconds
                 path: '/' // Ensure the path is set to root
@@ -61,7 +62,7 @@ export class AuthRoute {
             return res.status(401).json({message: 'Access denied. No token provided.'});
         }
 
-        const isVerified = await JwtService.verifyToken(token);
+        const isVerified = await JsonWebTokenService.verifyToken(token);
 
         if (!isVerified) {
             return res.status(401).json({message: 'Invalid or expired token.'});
@@ -105,8 +106,8 @@ export class AuthRoute {
             }
 
             // Login successful
-            const jwtToken = await JwtService.generateToken({name: user.username}, JWT_TOKEN_VALIDITY);
-            const refreshToken = await JwtService.generateToken({name: user.username}, REFRESH_TOKEN_VALIDITY);
+            const jwtToken = await JsonWebTokenService.generateToken({name: user.username}, JWT_TOKEN_VALIDITY);
+            const refreshToken = await JsonWebTokenService.generateToken({name: user.username}, REFRESH_TOKEN_VALIDITY);
 
             // secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
 

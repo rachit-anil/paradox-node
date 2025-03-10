@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 const SECRET_KEY = 'your-secret-key'; // Store this in environment variables in production
 
-export class JwtService {
+export class JsonWebTokenService {
     // Generate a JWT
     static generateToken(payload, expiresIn = 15) {
         return jwt.sign(payload, SECRET_KEY, { expiresIn });
