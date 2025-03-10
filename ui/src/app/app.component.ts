@@ -8,7 +8,6 @@ import { LoginComponent } from "./authentication/login/login.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ProgressService } from "./services/progress.service";
 import { NavbarComponent } from "./common/navbar/navbar.component";
-import { finalize } from "rxjs";
 import { AuthService } from "./services/auth.service";
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
@@ -82,7 +81,6 @@ export class AppComponent implements OnInit {
     //     }
     //   );
   }
-
 }
 
 // edit user info  - name, phone , otp , email
