@@ -7,3 +7,5 @@
 /dist
 /ui/.idea/*
 ui/.idea/modules.xml
+.DS_Store
+ui/.DS_Store

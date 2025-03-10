@@ -24,7 +24,7 @@ RUN rm -rf dist
 RUN npx tsc
 
 # Build the frontend (if applicable)
- RUN cd ui && npm install --force && npm run build --prod
+ RUN cd ui && npm install --force && npm run build--prod
 
 # Expose the port the app runs on
 EXPOSE 8080
