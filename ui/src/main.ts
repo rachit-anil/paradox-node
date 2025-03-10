@@ -26,12 +26,12 @@ bootstrapApplication(AppComponent, {
             {
                 path: "",
                 loadComponent: () =>
-                    import("./app/home/home.component").then((m) => m.HomeComponent),
+                    import("./app/components/home/home.component").then((m) => m.HomeComponent),
             },
             {
                 path: "gallery",
                 loadComponent: () =>
-                    import("./app/gallery/gallery.component").then(
+                    import("./app/components/gallery/gallery.component").then(
                         (m) => m.GalleryComponent
                     ),
                 canActivate: [AuthGuard],

@@ -1,7 +1,8 @@
 import {HttpClient} from "@angular/common/http";
 import {Component, OnInit} from "@angular/core";
-import {AuthService} from "../services/auth.service";
+import {AuthService} from "../../services/auth.service";
 import {MatButtonModule} from "@angular/material/button";
+import {GalleryService} from "../../services/gallery.service";
 
 @Component({
     selector: "app-gallery",
@@ -11,15 +12,18 @@ import {MatButtonModule} from "@angular/material/button";
     styleUrl: "./gallery.component.scss",
 })
 export class GalleryComponent implements OnInit {
-    constructor(private http: HttpClient, private authService: AuthService) {
+    constructor(
+                private http: HttpClient,
+                private authService: AuthService,
+                private galleryService: GalleryService,
+                ) {
     }
 
     ngOnInit() {
     }
 
     fetchGallery() {
-        this.http
-            .get("http://localhost:8080/auth/gallery", {withCredentials: true})
+        this.galleryService.getGalleryContents()
             .subscribe({
                 next: (response: any) => {
                     console.log("Gallery details");
