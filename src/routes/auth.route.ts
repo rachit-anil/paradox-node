@@ -93,10 +93,14 @@ export class AuthRoute {
         const {username, password} = request.body || {};
 
         try {
+            if (!username || !password) {
+                return response.status(400).json({error: 'Please enter username or password'});
+            }
+
             const user = await this.authService.findUser(username);
 
             if (!user) {
-                return response.status(404).json({error: 'User not found'});
+                return response.status(404).json({error: 'User could not be found'});
             }
 
             const isPasswordMatching = await bcrypt.compare(password, user.password);

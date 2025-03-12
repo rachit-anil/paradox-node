@@ -1,0 +1,16 @@
+<!-- #docregion mat-menu-trigger-for -->
+<button class="profile-picture" mat-button [matMenuTriggerFor]="menu">
+    <img src="https://media.licdn.com/dms/image/v2/D5635AQFv2q3Z7kH4Ag/profile-framedphoto-shrink_200_200/profile-framedphoto-shrink_200_200/0/1627310178318?e=1742328000&v=beta&t=TpNFnxQhy6fYuKbSM_5f-8LRSenL5-o2B7FcWXgPNxg">
+    <!--    <div class="profile-picture">-->
+<!--        <img src="">-->
+<!--    </div>-->
+</button>
+<!-- #enddocregion mat-menu-trigger-for -->
+<mat-menu #menu="matMenu">
+    <button *ngIf="isUserAuthenticated" mat-menu-item (click)="editUserDetails()">
+        Edit Details
+    </button>
+    <button *ngIf="isUserAuthenticated" mat-menu-item (click)="logout()">
+        Logout
+    </button>
+</mat-menu>

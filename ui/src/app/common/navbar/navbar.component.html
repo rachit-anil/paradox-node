@@ -19,8 +19,6 @@
     <button *ngIf="!isUserAuthenticated" mat-button [routerLink]="['/login']">
       Login
     </button>
-    <button *ngIf="isUserAuthenticated" mat-button (click)="logout()">
-      Logout
-    </button>
+      <user-component *ngIf="isUserAuthenticated"></user-component>
   </div>
 </nav>

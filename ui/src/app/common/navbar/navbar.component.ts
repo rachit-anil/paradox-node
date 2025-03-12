@@ -5,11 +5,12 @@ import { Router, RouterModule } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import {SnackbarService} from "../../services/snackbar.service";
 import {TokenCounterComponent} from "../../components/token-counter/token-counter.component";
+import {UserComponent} from "../../components/user-component/user.component";
 
 @Component({
   selector: "app-navbar",
   standalone: true,
-    imports: [RouterModule, CommonModule, MatButtonModule, TokenCounterComponent],
+    imports: [RouterModule, CommonModule, MatButtonModule, TokenCounterComponent, UserComponent],
   templateUrl: "./navbar.component.html",
   styleUrl: "./navbar.component.scss",
 })

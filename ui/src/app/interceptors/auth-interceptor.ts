@@ -68,10 +68,11 @@ export class AuthInterceptor implements HttpInterceptor {
                     return next.handle(this.addToken(request, token.jwtToken));
                 }),
                 catchError((err) => {
-                    this.isRefreshing = false;
-                    // this.authService.logout(); // Clear tokens and navigate to login
-                    this.jwtService.clearToken();
-                    this.router.navigate(['/login']); // Navigate to login
+                    if(err.url.includes('/auth/refreshToken')){
+                        this.isRefreshing = false;
+                        this.jwtService.clearToken();
+                        this.router.navigate(['/login']); // Navigate to login
+                    }
                     return throwError(() => err);
                 }),
                 finalize(() => {

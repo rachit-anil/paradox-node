@@ -1,15 +1,23 @@
-import { AppDataSource } from "../sql-data-source";
-import { User } from "../entity/User";
+import {AppDataSource} from "../sql-data-source";
+import {User} from "../entity/User";
 import {validate} from "class-validator";
 import bcrypt from "bcrypt";
 
 export class AuthService {
     userRepository = AppDataSource.getRepository(User);
 
+    async updateUser(user: any) {
+        try {
+            const result = await this.userRepository.update({username: user.username}, user);
+            return result;
+        } catch (error) {
+            throw error; // Re-throw the error to handle it in the calling function
+        }
+    }
 
     async findUser(username: string) {
         try {
-            const user = await this.userRepository.findOne({ where: { username } });
+            const user = await this.userRepository.findOne({where: {username}});
             return user || null;
         } catch (error) {
             console.error('Error finding user:', error);
@@ -30,7 +38,7 @@ export class AuthService {
 
         // Check if user already exists
         const existingUser = await this.userRepository.findOne({
-            where: [{ username }],
+            where: [{username}],
         });
 
         if (existingUser) {
