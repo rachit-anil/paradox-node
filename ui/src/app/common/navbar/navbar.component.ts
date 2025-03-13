@@ -28,7 +28,6 @@ export class NavbarComponent {
 
   logout(){
     this.authService.logoutUser();
-    this.router.navigate(["login"]);
     this.snackbarService.openSnackBar("Logout successful");
   }
 }

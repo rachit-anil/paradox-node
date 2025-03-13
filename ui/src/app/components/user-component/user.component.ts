@@ -35,7 +35,7 @@ export class UserComponent implements OnInit{
 
   editUserDetails(){
     this.dialog.open(EditUserDialogComponent, {
-      width: '250px',
+      width: '350px',
     });
   }
 

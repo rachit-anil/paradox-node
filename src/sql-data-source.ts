@@ -1,6 +1,7 @@
 // src/data-source.ts
 import { DataSource } from "typeorm";
-import { User } from "./entity/User"; // Import your entity
+import { User } from "./entity/User";
+import {OAuthTokens} from "./entity/OauthTokens"; // Import your entity
 
 const dbHost = process.env.DB_HOST || 'localhost';
 const dbName = process.env.DB_NAME;
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
     database: "spring",
     synchronize: true, // Automatically create database schema (for development only)
     logging: true, // Enable logging
-    entities: [User], // Add your entities here
+    entities: [User, OAuthTokens], // Add your entities here
     migrations: [], // Add migrations if needed
     subscribers: [], // Add subscribers if needed
     extra: {

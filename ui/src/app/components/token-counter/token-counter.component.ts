@@ -2,7 +2,8 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {jwtDecode} from "jwt-decode";
 import {CommonModule} from "@angular/common";
 import {JWTService} from "../../services/jwt.service";
-import {fromEvent, Observable} from "rxjs";
+import {Observable, of} from "rxjs";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-token-counter',
@@ -16,11 +17,12 @@ export class TokenCounterComponent implements OnInit, OnDestroy {
   remainingTime: number = 0; // Remaining time in seconds
   private intervalId: any;
 
-  constructor(private  jwtService: JWTService) {
+  constructor(private  jwtService: JWTService,
+              private cookieService: CookieService) {
   }
 
   ngOnInit(): void {
-    this.createLocalStorageObservable('jwtToken').subscribe(token => {
+    this.jwtCookieObservable(this.cookieService, 'jwtToken').subscribe(token => {
       this.token = token as string;
       console.log("token changed");
       clearInterval(this.intervalId);
@@ -47,33 +49,30 @@ export class TokenCounterComponent implements OnInit, OnDestroy {
     }
   }
 
-  createLocalStorageObservable(key: string) {
-    return new Observable(subscriber => {
-      // Helper function to notify when the value changes
-      const notifyChange = () => {
-        const value = localStorage.getItem(key);
-        subscriber.next(value);
-      };
-
-      // Emit the current value of the key when subscription starts
-      notifyChange();
-
-      // We need to intercept changes in localStorage by wrapping `setItem`
-      const originalSetItem = localStorage.setItem;
-      localStorage.setItem = (keyToSet, value) => {
-        originalSetItem.call(localStorage, keyToSet, value);
-
-        // If the changed key matches, we notify the observer
-        if (keyToSet === key) {
-          notifyChange();
-        }
-      };
-
-      // Cleanup: Restore the original localStorage.setItem
-      return () => {
-        localStorage.setItem = originalSetItem;
-      };
-    });
+  jwtCookieObservable(cookieService: CookieService, cookieName: string = 'jwtToken'): Observable<string | null> {
+    return of(cookieService.get(cookieName)).pipe(
+        (source) => new Observable(subscriber => {
+          source.subscribe({
+            next(jwtToken) {
+              if (jwtToken) {
+                subscriber.next(jwtToken);
+              } else {
+                subscriber.next(null);
+              }
+              subscriber.complete();
+            },
+            error(err) {
+              subscriber.error(err);
+            },
+            complete: () => {
+              if (!cookieService.check(cookieName)) {
+                subscriber.next(null);
+              }
+              subscriber.complete();
+            }
+          });
+        })
+    );
   }
 
   formatTime(seconds: number) {

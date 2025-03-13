@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import {CookieService} from "ngx-cookie-service";
 
 @Injectable({
   providedIn: 'root'
@@ -8,14 +9,14 @@ export class JWTService {
   // Key for storing the token in session storage
   readonly TOKEN_KEY = 'jwtToken';
 
-  constructor() { }
+  constructor(private cookieService: CookieService) { }
 
   setJwtToken(token: string){
-    localStorage.setItem(this.TOKEN_KEY, token);
+    this.cookieService.set('jwtToken', token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.cookieService.get(this.TOKEN_KEY);
   }
 
   isTokenValid(): boolean {
@@ -57,7 +58,6 @@ export class JWTService {
   }
 
   clearToken(): void {
-    // localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.setItem(this.TOKEN_KEY, '');
+    this.cookieService.delete(this.TOKEN_KEY);
   }
 }

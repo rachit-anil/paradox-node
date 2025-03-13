@@ -24,4 +24,8 @@ export class LoginSignUpComponent implements OnInit {
       this.router.navigate([""]);
     }
   }
+
+  signUpWithGoogle(){
+    this.authService.signUpWithGoogle();
+  }
 }

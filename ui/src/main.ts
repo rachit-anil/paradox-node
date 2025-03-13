@@ -11,6 +11,8 @@ import {AuthGuard} from "./app/guards/auth.guard";
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import {AuthInterceptor} from "./app/interceptors/auth-interceptor";
 import {CsrfInterceptor} from "./app/interceptors/csrf-interceptor";
+import {AuthService} from "./app/services/auth.service";
+import {appInitializerProviders} from "./app/services/app-initializer.service";
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -46,6 +48,8 @@ bootstrapApplication(AppComponent, {
                 headerName: 'X-CSRF-TOKEN', // Name of the header to include the CSRF token
             })),
         {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-        {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true,}
+        {provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptor, multi: true,},
+        appInitializerProviders,
     ],
 });
+
