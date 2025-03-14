@@ -13,7 +13,7 @@ export class GoogleOAuthRoute {
     client = new OAuth2Client({
         clientId : process.env.GOOGLE_OAUTH_CLIENT_ID,
         clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-        redirectUri: 'http://localhost:8080/auth/google/callback',
+        redirectUri: process.env.NODE_ENV === 'production' ? 'https://projectparadox.in/auth/google/callback' : 'http://localhost:8080/auth/google/callback',
     });
 
     constructor() {
