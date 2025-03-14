@@ -45,12 +45,12 @@ export class LoginComponent {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      username: ["", [Validators.required, Validators.minLength(3)]],
+      email: ["", [Validators.required, Validators.minLength(3)]],
       password: ["", [Validators.required, Validators.minLength(5)]],
     });
 
     this.loginForm.patchValue({
-      username: "rachit9910102312",
+      email: "rachit9910102312@gmail.com",
       password: "rachitanil"
     })
   }
@@ -59,13 +59,17 @@ export class LoginComponent {
     return this.loginForm.get("username") as FormControl;
   }
 
+  get email(): FormControl {
+    return this.loginForm.get("email") as FormControl;
+  }
+
   get password(): FormControl {
     return this.loginForm.get("password") as FormControl;
   }
 
   login() {
     this.spinnerService.showSpinner('Logging in');
-    this.authService.loginUser(this.loginForm.get("username")!.value, this.loginForm.get("password")!.value)
+    this.authService.loginUser(this.loginForm.get("email")!.value, this.loginForm.get("password")!.value)
       .pipe(
         finalize(()=>this.spinnerService.hideSpinner())
       )

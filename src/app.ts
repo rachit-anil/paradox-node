@@ -11,6 +11,7 @@ import {authenticateUser} from "./custom-middleware/authMiddleware";
 
 dotenv.config();
 const app = express();
+
 app.use(express.json());
 app.use(bodyParser.json()); // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
@@ -38,6 +39,11 @@ app.use(express.static(path.join(__dirname, '..', 'ui', 'dist', 'browser')));
 
 const route = new BaseRoute();
 app.use('/', authenticateUser, route.router);
+
+// Catch-all route to serve Angular's index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'ui', 'dist', 'browser', 'index.html'));
+});
 
 const port = process.env.PORT || 8080;
 

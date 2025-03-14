@@ -29,7 +29,9 @@ export class AuthInterceptor implements HttpInterceptor {
         null
     );
 
-    constructor(private authService: AuthService,private jwtService: JWTService, private router: Router) {} // Inject your AuthService and Router
+    constructor(private authService: AuthService,
+                private jwtService: JWTService,
+                private router: Router) {} // Inject your AuthService and Router
 
     intercept(
         request: HttpRequest<unknown>,

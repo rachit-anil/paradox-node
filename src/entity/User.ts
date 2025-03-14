@@ -8,22 +8,27 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Length(4, 255)
+    @IsOptional()
     username: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    @IsOptional()
     password: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
-    @IsEmail()
     @IsOptional()
+    googleId: string;
+
+    @Column({ type: 'varchar', length: 255, unique: true, nullable: false  })
+    @IsEmail()
     email: string | null;
 
     @Column({ type: 'varchar', length: 20, nullable: true })
     @IsPhoneNumber()
     @IsOptional()
-    mobileNumber: string | null;
+    mobile: string | null;
 
     @Column({ type: 'varchar', length: 100, nullable: true })
     @IsOptional()
@@ -37,4 +42,8 @@ export class User {
     @IsDateString() // Ensures the value is a valid date string
     @IsOptional()
     dateOfBirth: Date | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    @IsOptional()
+    profilePicture: string;
 }

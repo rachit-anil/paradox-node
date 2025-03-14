@@ -46,15 +46,18 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.checkJwtValidity();
+    // this.checkJwtValidity();
   }
 
-  checkJwtValidity(){
-    if(this.jwtService.isTokenValid()){
-      this.authService.setUserAuthenticationStatus(true);
-    }else{
-      this.router.navigate(['login']);
-    }
+  // Should only be done on server as anyone can spoof a JWT with any random secret and store it in session or cookie
+  // If we do not do it on server then any hacker can access the logged in view of the UI.
+  // As JWT secret should never travel to client, it should only be done on server. At least when the app loads.
+  // checkJwtValidity(){
+  //   if(this.jwtService.isTokenValid()){
+  //     this.authService.setUserAuthenticationStatus(true);
+  //   }else{
+  //     this.router.navigate(['login']);
+  //   }
     // this.spinnerService.spinnerStatus.subscribe(spinnerData => {
     //   this.showSpinner = spinnerData.showSpinner;
     //   this.spinnerText = spinnerData.message || '';
@@ -80,7 +83,7 @@ export class AppComponent implements OnInit {
     //       this.authService.setUserAuthenticationStatus(false);
     //     }
     //   );
-  }
+  // }
 }
 
 // edit user info  - name, phone , otp , email

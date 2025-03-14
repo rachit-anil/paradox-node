@@ -3,10 +3,10 @@
   <div>
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input type="email" matInput [formControl]="username" />
-      @if (username.hasError('email') && !username.hasError('required')) {
+      <input type="email" matInput [formControl]="email" />
+      @if (email.hasError('email') && !email.hasError('required')) {
       <mat-error>Please enter a valid email address</mat-error>
-      } @if (username.hasError('required')) {
+      } @if (email.hasError('required')) {
       <mat-error>Email is <strong>required</strong></mat-error>
       }
     </mat-form-field>

@@ -47,6 +47,7 @@ export class SignUpComponent {
         this.signUpForm = this.fb.group({
             name: ["", Validators.required],
             mobile: ["", Validators.required],
+            email: ["", [Validators.required, Validators.minLength(3)]],
             username: ["", [Validators.required, Validators.minLength(3)]],
             password: ["", [Validators.required, Validators.minLength(5)]],
         });
@@ -55,6 +56,7 @@ export class SignUpComponent {
             name: "Rachit",
             mobile: '9711564369',
             username: "rachit9910102312",
+            email: "rachit9910102312@gmail.com",
             password: "rachitanil"
         })
     }
@@ -67,6 +69,10 @@ export class SignUpComponent {
         return this.signUpForm.get("username") as FormControl;
     }
 
+    get email(): FormControl {
+        return this.signUpForm.get("email") as FormControl;
+    }
+
     get password(): FormControl {
         return this.signUpForm.get("password") as FormControl;
     }
@@ -77,7 +83,7 @@ export class SignUpComponent {
 
     onSubmit() {
         const signUpData = {
-            username: this.signUpForm.get("username")!.value,
+            email: this.signUpForm.get("email")!.value,
             password: this.signUpForm.get("password")!.value,
         };
 

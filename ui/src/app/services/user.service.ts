@@ -15,6 +15,10 @@ export class UserService {
     return this.http.put(`${apiUrl}/api/userDetails/saveUserInfo`,user,{withCredentials: true});
   }
 
+  getUser(){
+    return this.http.get(`${apiUrl}/api/userDetails/getUser`, {withCredentials: true});
+  }
+
   uploadUserImage(){
 
   }

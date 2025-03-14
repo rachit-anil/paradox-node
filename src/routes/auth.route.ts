@@ -2,9 +2,7 @@ import express, {response} from 'express';
 import {AuthService} from '../services/auth.service';
 import bcrypt from 'bcrypt';
 import {JsonWebTokenService} from "../services/json-web-token.service";
-
-const JWT_TOKEN_VALIDITY = 2000;
-const REFRESH_TOKEN_VALIDITY = 2000000;
+import {JWT_TOKEN_VALIDITY, REFRESH_TOKEN_VALIDITY} from "../constants/app.constants";
 
 export class AuthRoute {
     private router;
@@ -17,10 +15,19 @@ export class AuthRoute {
         this.router.post('/signup', this.signup.bind(this));
         this.router.get('/gallery', this.gallery.bind(this));
         this.router.get('/refreshToken', this.refreshToken.bind(this));
+        this.router.get('/checkJwtValidity', this.checkJwtValidity.bind(this));
     }
 
     delay(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async checkJwtValidity(req: express.Request, res: express.Response) {
+        console.log(req.cookies);
+         if(JsonWebTokenService.verifyToken(req.cookies.jwtToken)){
+            res.status(200).json({isValid: true});
+        }else{
+             res.status(401).json({isValid: false});
+         }
     }
 
     async refreshToken(req: express.Request, res: express.Response) {
@@ -30,7 +37,7 @@ export class AuthRoute {
         const refreshTokenCookie = req.cookies.refreshToken || '';
 
         if (!refreshTokenCookie) {
-            return res.status(401).send('No refresh token found!');
+            return res.status(401).redirect('/login');
         }
 
         // validate refresh token cookie - refresh token should be stored in data base ? How should they be stored ?
@@ -39,7 +46,7 @@ export class AuthRoute {
         // if validated.. generate another jwt and return
         if (isRefreshTokenVerified) {
             const userInfo = JsonWebTokenService.decodeToken(refreshTokenCookie);
-            const jwtToken = await JsonWebTokenService.generateToken({name: userInfo.username}, JWT_TOKEN_VALIDITY);  // new access token
+            const jwtToken = await JsonWebTokenService.generateToken({name: userInfo.email}, JWT_TOKEN_VALIDITY);  // new access token
             return res.status(200).send({jwtToken});
         } else {
             // if not valid delete cookie from the response
@@ -50,7 +57,7 @@ export class AuthRoute {
                 maxAge: 1000, // 100 seconds
                 path: '/' // Ensure the path is set to root
             });
-            return res.status(401).send({message: 'Unauthorized'});
+            return res.status(401).redirect('/login');
         }
     }
 
@@ -73,14 +80,14 @@ export class AuthRoute {
     }
 
     async signup(req: express.Request, res: express.Response) {
-        const {username, password} = req.body || {};
+        const {email, password} = req.body || {};
 
-        if (!username || !password) {
-            return res.status(400).json({message: "username, and password are required."});
+        if (!email || !password) {
+            return res.status(400).json({message: "Email and password are required."});
         }
 
         const authService = new AuthService();
-        const result = await authService.createUser(username, password);
+        const result = await authService.createUser(email, password);
 
         if (typeof result === "string") {
             return res.status(400).json({message: result});
@@ -90,23 +97,27 @@ export class AuthRoute {
     }
 
     async login(request: express.Request, response: express.Response) {
-        const {username, password} = request.body || {};
+        const {email, password} = request.body || {};
 
         try {
-            if (!username || !password) {
-                return response.status(400).json({error: 'Please enter username or password'});
+            if (!email || !password) {
+                return response.status(400).json({error: 'Please enter email or password'});
             }
 
-            const user = await this.authService.findUser(username);
+            const user = await this.authService.findUser(email);
 
             if (!user) {
                 return response.status(404).json({error: 'User could not be found'});
             }
 
+            if(!user.password){
+                return response.status(400).json({error: 'Please generate password by logging in through Google first'});
+            }
+
             const isPasswordMatching = await bcrypt.compare(password, user.password);
             // Compare passwords (use bcrypt for hashed passwords)
             if (!isPasswordMatching) {
-                return response.status(401).json({error: 'Invalid credentials'});
+                return response.status(400).json({error: 'Invalid credentials'});
             }
 
             // Login successful
@@ -115,11 +126,19 @@ export class AuthRoute {
 
             // secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
 
+            response.cookie('jwtToken', jwtToken, {
+                httpOnly: false,
+                secure: false, // Set to true in production for HTTPS
+                sameSite: 'strict', // Or 'Lax' depending on your use case
+                maxAge: JWT_TOKEN_VALIDITY, //
+                path: '/' // Ensure the path is set to root
+            });
+
             response.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: false, // Set to true in production for HTTPS
                 sameSite: 'strict', // Or 'Lax' depending on your use case
-                maxAge: 1000000, // 100 seconds
+                maxAge: REFRESH_TOKEN_VALIDITY, //
                 path: '/' // Ensure the path is set to root
             });
 
