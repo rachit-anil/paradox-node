@@ -22,7 +22,7 @@ export class UserComponent implements OnInit{
               private router: Router,
               private snackbarService: SnackbarService,
               private dialog: MatDialog) {
-    this.editUserDetails()
+    // this.editUserDetails()
   }
 
   ngOnInit() {

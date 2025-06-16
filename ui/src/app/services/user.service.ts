@@ -12,7 +12,7 @@ export class UserService {
   constructor( private http: HttpClient,) { }
 
   saveUserInfo(user: any){
-    return this.http.put(`${apiUrl}/api/userDetails/saveUserInfo`,user,{withCredentials: true});
+    return this.http.put(`${apiUrl}/api/userDetails/saveUserInfo`,user, {withCredentials: true});
   }
 
   getUser(){

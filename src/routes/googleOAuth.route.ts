@@ -70,27 +70,26 @@ export class GoogleOAuthRoute {
                 await this.authService.saveGoogleAuthUser(updatedUser, user.id);
             }
 
-
             // Create JWT so that user is always validated through this node server
             // Return jwt and refresh token through the cookies
             const jwtToken = JsonWebTokenService.generateToken({email: userInfo.email}, JWT_TOKEN_VALIDITY);
             const refreshToken = await JsonWebTokenService.generateToken({email: userInfo.email}, REFRESH_TOKEN_VALIDITY);
 
-            res.cookie('jwtToken', jwtToken, {
-                httpOnly: false,
-                secure: false, // Set to true in production for HTTPS
-                sameSite: 'strict', // Or 'Lax' depending on your use case
-                maxAge: JWT_TOKEN_VALIDITY, //
-                path: '/' // Ensure the path is set to root
-            });
+
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: false, // Set to true in production for HTTPS
                 sameSite: 'strict', // Or 'Lax' depending on your use case
-                maxAge: REFRESH_TOKEN_VALIDITY, //
+                maxAge: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_VALIDITY,
                 path: '/' // Ensure the path is set to root
             });
-
+            res.cookie('jwtToken', jwtToken, {
+                httpOnly: false,
+                secure: false, // Set to true in production for HTTPS
+                sameSite: 'strict', // Or 'Lax' depending on your use case
+                maxAge: Math.floor(Date.now() / 1000) + JWT_TOKEN_VALIDITY, //
+                path: '/' // Ensure the path is set to root
+            });
             if(process.env.NODE_ENV === 'production') {
                 res.redirect('/login');
             }else{

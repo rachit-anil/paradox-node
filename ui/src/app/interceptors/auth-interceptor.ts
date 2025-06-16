@@ -45,7 +45,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
+                console.log('Error caught above:', error);
                 if (error && error.status === 401) {
+                    if(error.url?.includes('/auth/refreshToken')){
+                        this.router.navigate(['/login']); // Navigate to login
+                        return throwError(() => error);
+                    }
                     return this.handle401Error(request, next);
                 } else {
                     return throwError(() => error);
@@ -64,15 +69,15 @@ export class AuthInterceptor implements HttpInterceptor {
 
             return this.authService.refreshToken().pipe(
                 switchMap((token: any) => {
-                    this.isRefreshing = false;
                     this.jwtService.setJwtToken(token.jwtToken);
                     this.refreshTokenSubject.next(token.jwtToken); // Assuming your refresh token returns a new access token
                     return next.handle(this.addToken(request, token.jwtToken));
                 }),
                 catchError((err) => {
+                    console.log('Error caught:', err);
                     if(err.url.includes('/auth/refreshToken')){
-                        this.isRefreshing = false;
-                        this.jwtService.clearToken();
+                        debugger;
+                        // this.jwtService.clearToken();
                         this.router.navigate(['/login']); // Navigate to login
                     }
                     return throwError(() => err);

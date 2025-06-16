@@ -21,6 +21,7 @@ export class AuthRoute {
     delay(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
     async checkJwtValidity(req: express.Request, res: express.Response) {
         console.log(req.cookies);
          if(JsonWebTokenService.verifyToken(req.cookies.jwtToken)){
@@ -46,7 +47,23 @@ export class AuthRoute {
         // if validated.. generate another jwt and return
         if (isRefreshTokenVerified) {
             const userInfo = JsonWebTokenService.decodeToken(refreshTokenCookie);
-            const jwtToken = await JsonWebTokenService.generateToken({name: userInfo.email}, JWT_TOKEN_VALIDITY);  // new access token
+            const jwtToken = await JsonWebTokenService.generateToken({email: userInfo.email}, JWT_TOKEN_VALIDITY);  // new access token
+            const refreshToken = await JsonWebTokenService.generateToken({email: userInfo.email}, REFRESH_TOKEN_VALIDITY);  // new access token
+            res.cookie('jwtToken', jwtToken, {
+                httpOnly: false,
+                secure: false, // Set to true in production for HTTPS
+                sameSite: 'strict', // Or 'Lax' depending on your use case
+                maxAge: JWT_TOKEN_VALIDITY, //
+                path: '/' // Ensure the path is set to root
+            });
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: false, // Set to true in production for HTTPS
+                sameSite: 'strict', // Or 'Lax' depending on your use case
+                maxAge: REFRESH_TOKEN_VALIDITY, //
+                path: '/' // Ensure the path is set to root
+            });
             return res.status(200).send({jwtToken});
         } else {
             // if not valid delete cookie from the response
@@ -54,10 +71,10 @@ export class AuthRoute {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
                 sameSite: 'strict', // Or 'Lax' depending on your use case
-                maxAge: 1000, // 100 seconds
+                maxAge: REFRESH_TOKEN_VALIDITY, // 100 seconds
                 path: '/' // Ensure the path is set to root
             });
-            return res.status(401).redirect('/login');
+            return res.status(401).json({ message: "refresh token not valid" });
         }
     }
 
@@ -121,8 +138,8 @@ export class AuthRoute {
             }
 
             // Login successful
-            const jwtToken = await JsonWebTokenService.generateToken({name: user.username}, JWT_TOKEN_VALIDITY);
-            const refreshToken = await JsonWebTokenService.generateToken({name: user.username}, REFRESH_TOKEN_VALIDITY);
+            const jwtToken = await JsonWebTokenService.generateToken({email: user.email}, JWT_TOKEN_VALIDITY);
+            const refreshToken = await JsonWebTokenService.generateToken({email: user.email}, REFRESH_TOKEN_VALIDITY);
 
             // secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
 

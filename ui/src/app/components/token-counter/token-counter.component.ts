@@ -95,7 +95,7 @@ export class TokenCounterComponent implements OnInit, OnDestroy {
     }
 
     if (minutes > 0) {
-      result += `${minutes}:`;
+      result += `${minutes}m:`;
 
       if (remainingSeconds > 0) {
         result += ' ';
