@@ -3,10 +3,8 @@ import {Component, OnInit} from "@angular/core";
 import {AuthService} from "../../services/auth.service";
 import {MatButtonModule} from "@angular/material/button";
 import {GalleryService} from "../../services/gallery.service";
-import {provideEffects} from "@ngrx/effects";
-import {provideState, Store} from "@ngrx/store";
-import {GalleryEffects} from "./store/gallery.effects";
-import {galleryReducer, GalleryState} from "./store/gallery.reducer";
+import {Store} from "@ngrx/store";
+import {GalleryState} from "./store/gallery.reducer";
 import {loadGallery} from "./store/gallery.actions";
 
 @Component({
@@ -26,10 +24,6 @@ export class GalleryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.onLoadImages()
-    }
-
-    onLoadImages() {
     }
 
     fetchGallery() {

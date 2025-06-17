@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {ChangeDetectionStrategy, Component, OnInit} from "@angular/core";
 import {
   Router,
   RouterModule,
@@ -28,6 +28,7 @@ import {JWTService} from "./services/jwt.service";
   ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   title = "projectParadox";

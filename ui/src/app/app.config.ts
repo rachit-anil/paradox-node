@@ -1,4 +1,4 @@
-import {ApplicationConfig, isDevMode, provideZoneChangeDetection} from '@angular/core';
+import {ApplicationConfig, importProvidersFrom, isDevMode, NgZone, provideZoneChangeDetection} from '@angular/core';
 import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
@@ -19,10 +19,14 @@ import {entityConfig} from "./entity-metadata";
 import {routes} from "./app.routes";
 import {appReducer} from "./store/app.reducer";
 import {AppEffects} from "./store/app.effects";
+import {provideAnimations} from "@angular/platform-browser/animations";
+import {MatNativeDateModule} from "@angular/material/core";
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
+    importProvidersFrom(MatNativeDateModule),
     provideStore({ appState: appReducer }),
     provideEffects([AppEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),

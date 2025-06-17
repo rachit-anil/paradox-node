@@ -1,6 +1,6 @@
 <nav>
   <div class="links">
-    <div><button mat-button [routerLink]="['']">Home</button></div>
+      <div><button mat-button [routerLink]="['']">Home</button></div>
     <div>
       <button
         *ngIf="isUserAuthenticated"
@@ -10,6 +10,8 @@
         Gallery
       </button>
     </div>
+      <div><button mat-button [routerLink]="['/debug']">Debug</button></div>
+
   </div>
 
   <div class="login-logout">

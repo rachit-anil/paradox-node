@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Router, RouterModule } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
@@ -10,9 +10,10 @@ import {UserComponent} from "../../components/user-component/user.component";
 @Component({
   selector: "app-navbar",
   standalone: true,
-    imports: [RouterModule, CommonModule, MatButtonModule, TokenCounterComponent, UserComponent],
+  imports: [RouterModule, CommonModule, MatButtonModule, TokenCounterComponent, UserComponent],
   templateUrl: "./navbar.component.html",
   styleUrl: "./navbar.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   isUserAuthenticated = false;
