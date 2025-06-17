@@ -3,12 +3,13 @@ import {MatButtonModule} from "@angular/material/button";
 import {
   MatDialogActions,
   MatDialogClose,
-  MatDialogContent,
+  MatDialogContent, MatDialogRef,
 } from '@angular/material/dialog';
 import {UserService} from "../../../services/user.service";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
+import {SnackbarService} from "../../../services/snackbar.service";
 @Component({
   selector: 'app-edit-user-dialog',
   standalone: true,
@@ -20,8 +21,11 @@ export class EditUserDialogComponent implements OnInit {
   userForm!: FormGroup;
   user: any;
 
-  constructor(private userService: UserService,
-              private fb: FormBuilder,) {
+  constructor(
+              private userService: UserService,
+              private fb: FormBuilder,
+              private snackbarService: SnackbarService,
+              private dialogRef: MatDialogRef<EditUserDialogComponent>) {
   }
 
   // add dob and profile picture later
@@ -75,7 +79,11 @@ export class EditUserDialogComponent implements OnInit {
     // If using a PUT request we should send the entire User object.
     const user = this.userForm.value;
     this.userService.saveUserInfo(user).subscribe({
-      next: (response: any) => {console.log(response)},
+      next: (response: any) => {
+        console.log(response);
+        this.snackbarService.openSnackBar("User details saved successfully.");
+        this.dialogRef.close();
+        },
       error: (error: any) => {console.log(error)},
       complete: () => {}
     });
