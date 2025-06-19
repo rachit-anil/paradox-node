@@ -1,29 +1,51 @@
 <mat-accordion class="example-headers-align" multi>
-<!--    <mat-expansion-panel expanded>-->
-<!--        <mat-expansion-panel-header>-->
-<!--            <mat-panel-title> Zone JS / OnPush </mat-panel-title>-->
-<!--            <mat-panel-description>-->
-<!--                Behavior on disabling Zone JS-->
-<!--            </mat-panel-description>-->
-<!--        </mat-expansion-panel-header>-->
-<!--       <debug-zone-js></debug-zone-js>-->
-<!--    </mat-expansion-panel>-->
+
+
     <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
-            <mat-panel-title> Change Detection </mat-panel-title>
+            <mat-panel-title> Template Rendering Mechanisms </mat-panel-title>
             <mat-panel-description>
-                OnPush / Zone JS
+                Experiments with Content Child, Template Outlet- context, Component Outlet
             </mat-panel-description>
         </mat-expansion-panel-header>
-<!--        <debug-aot-jit></debug-aot-jit>-->
+        <template-rendering-mechanisms>
+            <div #contentChild>Show this text with Content child</div>
+        </template-rendering-mechanisms>
     </mat-expansion-panel>
-    <mat-expansion-panel expanded>
+
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title> Angular Life cycle Hooks </mat-panel-title>
+            <mat-panel-description>
+                Experiments with Angular LifeCycle Hooks
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <life-cycle-hooks [fakeInputProperty]="fakeInputProperty" [fakeFruits]="fakeFruits">
+            <button mat-button (click)="changeFakeInputPropertyReference()">Change Input Property Reference</button><br>
+            <button mat-button (click)="changeNestedValueInInputProperty()">Increase Grapes Qty</button><br>
+        </life-cycle-hooks>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title> Pure /  Impure Pipes </mat-panel-title>
+            <mat-panel-description>
+                Shows how pure and impure pipes behaves
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <pure-impure-pipes></pure-impure-pipes>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title> Change Detection </mat-panel-title>
             <mat-panel-description>
                 OnPush / Zone JS
             </mat-panel-description>
         </mat-expansion-panel-header>
-        <debug-change-detection></debug-change-detection>
+        <debug-change-detection [fakeInputProperty]="fakeInputProperty">
+            <button mat-button (click)="changeFakeInputPropertyReference()">Change Input Property Reference</button><br>
+        </debug-change-detection>
     </mat-expansion-panel>
 </mat-accordion>

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone} from '@angular/core';
+import {ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone} from '@angular/core';
 import {delay, Observable, of} from "rxjs";
 import {CommonModule} from "@angular/common";
 import {MatButtonModule} from "@angular/material/button";
@@ -12,13 +12,15 @@ import {MatButtonModule} from "@angular/material/button";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DebugChangeDetectionComponent {
-  @Input('showCycles') showCycles = '';
+  @Input('fakeInputProperty') fakeInputProperty: string[] = [];
   fakeObservable$ = new Observable<any>();
   counter = 0;
   isZoneJSActive = 'Zone.js is inactive';
 
   constructor(private ngZone: NgZone,
-              private cdRef: ChangeDetectorRef,) {
+              private cdRef: ChangeDetectorRef,
+              private applicationRef: ApplicationRef,
+              ) {
     if (this.ngZone instanceof NgZone) {
       this.isZoneJSActive = `Zone.js is active`;
       console.log('Zone.js is active');
@@ -51,7 +53,7 @@ export class DebugChangeDetectionComponent {
     });
   }
 
-  changeInputProperty(){
-    this.showCycles = 'some random stuff';
+  tickApplicationRef(){
+    this.applicationRef.tick();
   }
 }

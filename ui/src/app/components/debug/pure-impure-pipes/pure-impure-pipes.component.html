@@ -1,0 +1,23 @@
+
+Angular runs the pipe whenever it needs to update the view — depending on whether the pipe is pure or impure.
+<br/>
+<div class="container">
+    <div><br>
+        Impure Pipe Implementation [Child Comp] <br>
+        Pipe is evaluated with every Change Detection cycle<br>
+        <br> Time: {{ time | impure }}<br><br>
+        <button mat-button (click)="detectChanges()">Trigger Change detection</button><br>
+
+    </div>
+    <div><br>
+        Pure Pipe Implementation [Child Comp]<br>
+        Pipe is evaluated only once or when it is re assigned <br><br>
+        Time: {{ time | pure }}<br><br>
+        <button mat-button (click)="reassignTime()">Re-assign time</button><br>
+    </div>
+</div>
+
+<br>
+
+<!--Impure pipe with On Push-->
+<!--Pure pipe with On Push-->

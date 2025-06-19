@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DebugZoneJsComponent } from './debug-zone-js.component';
+import { LifeCycleHooksComponent } from './life-cycle-hooks.component';
 
-describe('DebugZoneJsComponent', () => {
-  let component: DebugZoneJsComponent;
-  let fixture: ComponentFixture<DebugZoneJsComponent>;
+describe('LifeCycleHooksComponent', () => {
+  let component: LifeCycleHooksComponent;
+  let fixture: ComponentFixture<LifeCycleHooksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DebugZoneJsComponent]
+      imports: [LifeCycleHooksComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DebugZoneJsComponent);
+    fixture = TestBed.createComponent(LifeCycleHooksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

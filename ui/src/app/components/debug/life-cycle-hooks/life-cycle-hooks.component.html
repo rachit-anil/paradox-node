@@ -1,0 +1,13 @@
+<ng-content></ng-content><br>
+Fruit List:
+<div>
+    <span *ngFor="let fruit of fakeFruits" >{{ fruit.name + '   '+ fruit.qty + '   '}}</span>
+</div>
+<br>
+
+Input property value : {{ fakeInputProperty }}
+<br><br>
+<button mat-button (click)="triggerChangeDetection()">Trigger Change detection</button><br>
+<button mat-button (click)="changeSecondFruit()">Change Fruit Qty [Direct Event Fire Inside Component]</button><br>
+<button mat-button (click)="detach()">Detach [from CD]</button><br>
+<button mat-button (click)="reattach()">Re-attach Fruit Qty [for CD]</button><br>

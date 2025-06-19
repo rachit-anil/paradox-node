@@ -8,15 +8,19 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import {DebugZoneJsComponent} from "./debug-zone-js/debug-zone-js.component";
 import {DebugChangeDetectionComponent} from "./debug-change-detection/debug-change-detection.component";
+import {PureImpurePipesComponent} from "./pure-impure-pipes/pure-impure-pipes.component";
+import {LifeCycleHooksComponent} from "./life-cycle-hooks/life-cycle-hooks.component";
+import {
+  TemplateRenderingMechanismsComponent
+} from "./template-rendering-mechanisms/template-rendering-mechanisms.component";
 
 
 @Component({
   selector: 'app-debug',
   standalone: true,
   imports: [
-      DebugZoneJsComponent,
+      LifeCycleHooksComponent,
       DebugChangeDetectionComponent,
     MatSidenavModule,
     MatMenuModule,
@@ -27,11 +31,26 @@ import {DebugChangeDetectionComponent} from "./debug-change-detection/debug-chan
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
+    PureImpurePipesComponent,
+    TemplateRenderingMechanismsComponent,
   ],
   templateUrl: './debug.component.html',
   styleUrl: './debug.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DebugComponent {
+  fakeInputProperty = ['hello'];
+  fakeFruits = [
+    {name: 'apple', qty: 2},
+    {name: 'grapes', qty: 3},
+    {name: 'mango', qty: 4},
+  ];
 
+  changeFakeInputPropertyReference(){
+    this.fakeInputProperty = ['hi'];
+  }
+
+  changeNestedValueInInputProperty(){
+    this.fakeFruits[1].qty+= 1;
+  }
 }

@@ -17,7 +17,9 @@ import {UserComponent} from "../../components/user-component/user.component";
 })
 export class NavbarComponent {
   isUserAuthenticated = false;
-  constructor(private authService: AuthService, private router: Router, private snackbarService: SnackbarService) {}
+  constructor(private authService: AuthService,
+              private router: Router,
+              private snackbarService: SnackbarService) {}
 
   ngOnInit() {
     this.authService.isUserAuthenticated$.subscribe(

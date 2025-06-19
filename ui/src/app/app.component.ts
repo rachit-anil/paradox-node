@@ -28,7 +28,7 @@ import {JWTService} from "./services/jwt.service";
   ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
   title = "projectParadox";
