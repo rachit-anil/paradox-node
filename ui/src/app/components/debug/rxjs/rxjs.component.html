@@ -1,0 +1,9 @@
+<button mat-button (click)="intervalCalls()">Interval Calls [After every second, concatMap]</button><br>
+<button mat-button (click)="intervalCallsWithMergeMap()">Interval Calls [After every second, mergeMap]</button><br>
+<button mat-button (click)="intervalCallsWithSwitchMap()">Interval Calls [After every second, prev call should be cancelled, Switch Map]</button><br>
+<button mat-button (click)="initiateSerialCalls()">Serial Calls [concatMap]</button><br>
+<button mat-button (click)="serialNestedCalls()">Serial Nested Calls</button><br>
+<button mat-button (click)="parallelCalls()">Parallel Calls [mergeMap] </button><br>
+<button mat-button (click)="parallelNestedCalls()">Parallel Nested Calls</button><br>
+<button mat-button (click)="retryFailedCalls()">Retry failed calls</button><br>
+<button mat-button (click)="retryWithExponentialBackOff()">Exponential backoff</button><br>

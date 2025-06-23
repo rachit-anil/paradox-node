@@ -24,7 +24,7 @@ export class TokenCounterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.jwtCookieObservable(this.cookieService, 'jwtToken').subscribe(token => {
       this.token = token as string;
-      console.log("token changed");
+      // console.log("token changed");
       clearInterval(this.intervalId);
       this.updateValue();
     });

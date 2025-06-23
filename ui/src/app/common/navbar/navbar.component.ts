@@ -13,7 +13,6 @@ import {UserComponent} from "../../components/user-component/user.component";
   imports: [RouterModule, CommonModule, MatButtonModule, TokenCounterComponent, UserComponent],
   templateUrl: "./navbar.component.html",
   styleUrl: "./navbar.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   isUserAuthenticated = false;

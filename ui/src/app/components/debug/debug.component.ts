@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, OnInit, signal, viewChild} from '@angular/core';
+import {
+  AfterContentInit, AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef, NgZone,
+  OnInit,
+  signal,
+  ViewChild,
+  viewChild
+} from '@angular/core';
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
 import {CommonModule} from "@angular/common";
@@ -14,6 +23,7 @@ import {LifeCycleHooksComponent} from "./life-cycle-hooks/life-cycle-hooks.compo
 import {
   TemplateRenderingMechanismsComponent
 } from "./template-rendering-mechanisms/template-rendering-mechanisms.component";
+import {RxjsComponent} from "./rxjs/rxjs.component";
 
 
 @Component({
@@ -33,24 +43,40 @@ import {
     MatDatepickerModule,
     PureImpurePipesComponent,
     TemplateRenderingMechanismsComponent,
+    RxjsComponent
   ],
   templateUrl: './debug.component.html',
   styleUrl: './debug.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DebugComponent {
+export class DebugComponent implements OnInit, AfterViewInit{
+  @ViewChild('cdComponent') cdComponent!: LifeCycleHooksComponent;
   fakeInputProperty = ['hello'];
   fakeFruits = [
     {name: 'apple', qty: 2},
     {name: 'grapes', qty: 3},
     {name: 'mango', qty: 4},
   ];
-
+constructor(private ngZone: NgZone) {
+}
   changeFakeInputPropertyReference(){
     this.fakeInputProperty = ['hi'];
   }
 
   changeNestedValueInInputProperty(){
     this.fakeFruits[1].qty+= 1;
+    // setTimeout(()=>{
+    // this.ngZone.runOutsideAngular(() => {
+    //   this.cdComponent.cdRef.markForCheck();
+    // });
+
+    // },2000);
+  }
+
+  ngAfterViewInit(): void {
+    // console.log(this.cdComponent);
+  }
+
+  ngOnInit(): void {
   }
 }

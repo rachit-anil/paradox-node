@@ -2,6 +2,7 @@ import {ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, I
 import {delay, Observable, of} from "rxjs";
 import {CommonModule} from "@angular/common";
 import {MatButtonModule} from "@angular/material/button";
+import {UserService} from "../../../services/user.service";
 
 @Component({
   selector: 'debug-change-detection',
@@ -17,13 +18,13 @@ export class DebugChangeDetectionComponent {
   counter = 0;
   isZoneJSActive = 'Zone.js is inactive';
 
-  constructor(private ngZone: NgZone,
+  constructor(      private ngZone: NgZone,
               private cdRef: ChangeDetectorRef,
               private applicationRef: ApplicationRef,
               ) {
     if (this.ngZone instanceof NgZone) {
       this.isZoneJSActive = `Zone.js is active`;
-      console.log('Zone.js is active');
+      // console.log('Zone.js is active');
     }
   }
 
@@ -56,4 +57,7 @@ export class DebugChangeDetectionComponent {
   tickApplicationRef(){
     this.applicationRef.tick();
   }
+
+
+
 }

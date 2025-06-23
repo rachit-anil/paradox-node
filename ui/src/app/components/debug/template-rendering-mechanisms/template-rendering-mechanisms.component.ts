@@ -12,7 +12,7 @@ import {FormsModule} from "@angular/forms";
 })
 export class TemplateRenderingMechanismsComponent implements OnInit, OnDestroy, AfterContentInit {
   @ContentChild('contentChild') contentChild!: ElementRef;
-  showConsoleLogs= true;
+  showConsoleLogs= false;
 
   ngOnInit(): void {
   }

@@ -1,7 +1,17 @@
 <mat-accordion class="example-headers-align" multi>
 
-
     <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+            <mat-panel-title> RxJs </mat-panel-title>
+            <mat-panel-description>
+                Experiments with NgRx Observables and operators.
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-rxjs>
+        </app-rxjs>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel >
         <mat-expansion-panel-header>
             <mat-panel-title> Template Rendering Mechanisms </mat-panel-title>
             <mat-panel-description>
@@ -20,7 +30,7 @@
                 Experiments with Angular LifeCycle Hooks
             </mat-panel-description>
         </mat-expansion-panel-header>
-        <life-cycle-hooks [fakeInputProperty]="fakeInputProperty" [fakeFruits]="fakeFruits">
+        <life-cycle-hooks #cdComponent [fakeInputProperty]="fakeInputProperty" [fakeFruits]="fakeFruits">
             <button mat-button (click)="changeFakeInputPropertyReference()">Change Input Property Reference</button><br>
             <button mat-button (click)="changeNestedValueInInputProperty()">Increase Grapes Qty</button><br>
         </life-cycle-hooks>

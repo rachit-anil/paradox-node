@@ -27,7 +27,7 @@ export class AppInitializerService {
 
         return this.authService.checkJwtValidity().pipe( // Replace '/api/verify-token' with your API endpoint
             map((response: any) => {
-                console.log('JWT token verified successfully:', response);
+                // console.log('JWT token verified successfully:', response);
                 if (response.isValid) {
                     this.authService.setUserAuthenticationStatus(true);
                 }
