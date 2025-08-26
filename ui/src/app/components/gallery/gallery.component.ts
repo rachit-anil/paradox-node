@@ -27,7 +27,7 @@ export class GalleryComponent implements OnInit {
     }
 
     fetchGallery() {
-        this.store.dispatch(loadGallery());
+        // this.store.dispatch(loadGallery());
 
         this.galleryService.getGalleryContents()
             .subscribe({
