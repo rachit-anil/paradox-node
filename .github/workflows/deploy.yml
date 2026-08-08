@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       commit:
-        description: 'Commit SHA to build and deploy (leave empty for a normal primary build)'
+        description: 'Commit SHA to build and deploy (leave empty for a normal primary build).'
         required: false
       branch:
         description: 'Branch the commit belongs to (required if commit is set)'
