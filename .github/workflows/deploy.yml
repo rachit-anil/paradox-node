@@ -1,4 +1,4 @@
-name: Deploy Node.js Server to EC2
+name: Build and Deploy
 
 on:
   workflow_dispatch:
