@@ -1,9 +1,18 @@
-name: Deploy Node.js Server to EC2
+name: Build and Deploy
 
 on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit SHA to build and deploy (leave empty for a normal primary build).'
+        required: false
+      branch:
+        description: 'Branch the commit belongs to (required if commit is set)'
+        required: false
   push:
     branches:
-      - main  # Change this to your default branch
+      - main
+      - 'feature/**'
 
 jobs:
   deploy:
