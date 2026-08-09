@@ -67,4 +67,20 @@ jobs:
             exit 1
           fi
 
-          echo "Verified: commit ${COMMIT} exists and belongs to branch ${BRANCH}."
+          echo "Verified: commit ${COMMIT} exists and belongs to branch ${BRANCH}." | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Verification passed::Commit ${COMMIT} exists and belongs to branch ${BRANCH}."
+
+      - name: Summary
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          ARTIFACT_TYPE: ${{ github.event.inputs.artifactType }}
+          COMMIT: ${{ github.event.inputs.commit }}
+          BRANCH: ${{ github.event.inputs.branch }}
+        run: |
+          {
+            echo "### Build and Deploy summary"
+            echo ""
+            echo "- **Artifact type:** ${ARTIFACT_TYPE}"
+            echo "- **Commit:** ${COMMIT}"
+            echo "- **Branch:** ${BRANCH}"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
