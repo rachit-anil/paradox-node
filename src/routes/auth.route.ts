@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import {JsonWebTokenService} from "../services/json-web-token.service";
 import {JWT_TOKEN_VALIDITY, REFRESH_TOKEN_VALIDITY} from "../constants/app.constants";
 
+// Auth Service
 export class AuthRoute {
     private router;
     private authService: AuthService;
