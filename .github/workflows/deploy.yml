@@ -29,6 +29,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Full history is required so we can verify the commit/branch relationship below.
+          fetch-depth: 0
 
       - name: Validate on-demand dispatch inputs
         if: github.event_name == 'workflow_dispatch'
@@ -38,3 +41,32 @@ jobs:
             echo "::error::Both 'commit' and 'branch' inputs must be provided together (or both left empty)."
             exit 1
           fi
+
+      - name: Verify commit and branch exist and match
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.commit != ''
+        env:
+          COMMIT: ${{ github.event.inputs.commit }}
+          BRANCH: ${{ github.event.inputs.branch }}
+        run: |
+          set -euo pipefail
+
+          # 1. Verify the branch exists on the remote.
+          if ! git ls-remote --exit-code --heads origin "refs/heads/${BRANCH}" >/dev/null 2>&1; then
+            echo "::error::Branch '${BRANCH}' does not exist on origin."
+            exit 1
+          fi
+
+          # 2. Make sure we have the branch history locally, then verify the commit exists.
+          git fetch --quiet origin "${BRANCH}"
+          if ! git cat-file -e "${COMMIT}^{commit}" 2>/dev/null; then
+            echo "::error::Commit '${COMMIT}' does not exist in the repository."
+            exit 1
+          fi
+
+          # 3. Verify the commit is actually contained in the given branch.
+          if ! git merge-base --is-ancestor "${COMMIT}" "origin/${BRANCH}"; then
+            echo "::error::Commit '${COMMIT}' does not belong to branch '${BRANCH}'."
+            exit 1
+          fi
+
+          echo "Verified: commit ${COMMIT} exists and belongs to branch ${BRANCH}."
