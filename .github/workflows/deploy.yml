@@ -3,23 +3,23 @@ name: Build and Deploy
 on:
   workflow_dispatch:
     inputs:
-      commit:
-        description: 'Commit SHA to build and deploy (leave empty for a normal primary build).'
-        required: false
-      branch:
-        description: 'Branch the commit belongs to (required if commit is set)'
-        required: false
       artifactType:
         description: 'Artifact type to build/publish'
         required: false
         type: choice
-        default: snapshot
+        default: SNAPSHOT
         options:
-          - snapshot
-          - release
+          - SNAPSHOT
+          - RELEASE
+      commit:
+        description: 'Commit SHA to build and deploy (leave empty for a normal primary build)'
+        required: false
+      branch:
+        description: 'Branch the commit belongs to (required if commit is set)'
+        required: false
   push:
     branches:
-      - main
+      - primary
       - 'feature/**'
 
 jobs:
