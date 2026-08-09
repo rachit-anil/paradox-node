@@ -12,11 +12,11 @@ on:
           - SNAPSHOT
           - RELEASE
       commit:
-        description: 'Commit SHA to build and deploy (leave empty for a normal primary build)'
-        required: false
+        description: 'Commit SHA to build and deploy'
+        required: true
       branch:
-        description: 'Branch the commit belongs to (required if commit is set)'
-        required: false
+        description: 'Branch the commit belongs to'
+        required: true
   push:
     branches:
       - main
@@ -40,17 +40,8 @@ jobs:
           # Full history is required so we can verify the commit/branch relationship below.
           fetch-depth: 0
 
-      - name: Validate on-demand dispatch inputs
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          if [[ -n "${{ github.event.inputs.commit }}" && -z "${{ github.event.inputs.branch }}" ]] || \
-             [[ -z "${{ github.event.inputs.commit }}" && -n "${{ github.event.inputs.branch }}" ]]; then
-            echo "::error::Both 'commit' and 'branch' inputs must be provided together (or both left empty)."
-            exit 1
-          fi
-
       - name: Verify commit and branch exist and match
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.commit != ''
+        if: github.event_name == 'workflow_dispatch'
         env:
           COMMIT: ${{ github.event.inputs.commit }}
           BRANCH: ${{ github.event.inputs.branch }}
