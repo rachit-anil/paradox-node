@@ -17,17 +17,9 @@ on:
       branch:
         description: 'Branch the commit belongs to (required if commit is set)'
         required: false
-      artifactType:
-        description: 'Artifact type to build/publish'
-        required: false
-        type: choice
-        default: snapshot
-        options:
-          - snapshot
-          - release
   push:
     branches:
-      - primary
+      - main
       - 'feature/**'
 
 jobs:
