@@ -27,6 +27,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Enforce dispatch from main
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'main'
+        run: |
+          echo "::error::This workflow must be run from the 'main' branch. Selected: '${{ github.ref_name }}'."
+          exit 1
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
