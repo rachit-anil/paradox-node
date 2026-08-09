@@ -30,6 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: main
           # Full history is required so we can verify the commit/branch relationship below.
           fetch-depth: 0
 
