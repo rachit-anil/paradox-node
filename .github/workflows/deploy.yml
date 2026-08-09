@@ -40,7 +40,7 @@ jobs:
           # Full history is required so we can verify the commit/branch relationship below.
           fetch-depth: 0
 
-      - name: Verify commit and branch exist and match
+      - name: Validate on-demand dispatch inputs - commit and branch exist and match
         if: github.event_name == 'workflow_dispatch'
         env:
           COMMIT: ${{ github.event.inputs.commit }}
@@ -69,15 +69,38 @@ jobs:
 
           echo "Verified: commit ${COMMIT} exists and belongs to branch ${BRANCH}." | tee -a "$GITHUB_STEP_SUMMARY"
 
+      - name: Prevent rebuilding a released commit
+        env:
+          TARGET_COMMIT: ${{ github.event.inputs.commit || github.sha }}
+        run: |
+          set -euo pipefail
+
+          # Ensure release tags are available locally.
+          git fetch --quiet --tags origin
+
+          # A commit is considered "released" only if a semver tag (optionally
+          # prefixed with 'v') points directly at it.
+          RELEASE_TAG="$(
+            git tag --points-at "$TARGET_COMMIT" |
+              awk '/^v?[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }'
+          )"
+          if [[ -n "$RELEASE_TAG" ]]; then
+            echo "::error::Commit ${TARGET_COMMIT} was already released as ${RELEASE_TAG}. Reuse the existing artifact instead of rebuilding it."
+            exit 1
+          fi
+
+          echo "Commit ${TARGET_COMMIT} has not been released; proceeding."
+
       - name: Summary
         env:
-          ARTIFACT_TYPE: ${{ github.event.inputs.artifactType }}
-          COMMIT: ${{ github.event.inputs.commit }}
-          BRANCH: ${{ github.event.inputs.branch }}
+          ARTIFACT_TYPE: ${{ github.event.inputs.artifactType || 'SNAPSHOT' }}
+          COMMIT: ${{ github.event.inputs.commit || github.sha }}
+          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
         run: |
           {
             echo "### Build and Deploy summary"
             echo ""
+            echo "- **Trigger:** ${{ github.event_name }}"
             echo "- **Artifact type:** ${ARTIFACT_TYPE}"
             echo "- **Commit:** ${COMMIT}"
             echo "- **Branch:** ${BRANCH}"
