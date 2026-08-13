@@ -1,107 +1,83 @@
-name: Build and Deploy
+name: Deploy Node.js Server to EC2
 
 on:
-  workflow_dispatch:
-    inputs:
-      artifactType:
-        description: 'Artifact type to build/publish'
-        required: false
-        type: choice
-        default: SNAPSHOT
-        options:
-          - SNAPSHOT
-          - RELEASE
-      commit:
-        description: 'Commit SHA to build and deploy'
-        required: true
-      branch:
-        description: 'Branch the commit belongs to'
-        required: true
   push:
     branches:
-      - main
-      - 'feature/**'
+      - main  # Change this to your default branch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
+    environment: development
     steps:
-      - name: Enforce dispatch from main
-        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'main'
-        run: |
-          echo "::error::This workflow must be run from the 'main' branch. Selected: '${{ github.ref_name }}'."
-          exit 1
-
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Copy code to EC2
+        uses: appleboy/scp-action@master
         with:
-          ref: main
-          # Full history is required so we can verify the commit/branch relationship below.
-          fetch-depth: 0
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "."
+          target: "/home/ec2-user/app"
 
-      - name: Validate on-demand dispatch inputs - commit and branch exist and match
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          COMMIT: ${{ github.event.inputs.commit }}
-          BRANCH: ${{ github.event.inputs.branch }}
-        run: |
-          set -euo pipefail
+      - name: Create .env file on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOT > /home/ec2-user/app/.env
+            PORT=${{ secrets.PORT }}
+            SQL_PORT=${{ secrets.SQL_PORT }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+            GOOGLE_OAUTH_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            NODE_ENV=production
+            EOT
 
-          # 1. Verify the branch exists on the remote.
-          if ! git ls-remote --exit-code --heads origin "refs/heads/${BRANCH}" >/dev/null 2>&1; then
-            echo "::error::Branch '${BRANCH}' does not exist on origin."
-            exit 1
-          fi
+      - name: Install NgInx, Docker and Docker Compose on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Install Https and NgInx
+            # Make the script executable
+            chmod +x /home/ec2-user/app/setup.sh
+            # Execute the script
+            /home/ec2-user/app/setup.sh
+            
+            # Install Docker
+            if ! command -v docker &> /dev/null; then
+              sudo yum update -y
+              sudo yum install -y docker
+              sudo service docker start
+              sudo usermod -a -G docker ec2-user
+            fi
 
-          # 2. Make sure we have the branch history locally, then verify the commit exists.
-          git fetch --quiet origin "${BRANCH}"
-          if ! git cat-file -e "${COMMIT}^{commit}" 2>/dev/null; then
-            echo "::error::Commit '${COMMIT}' does not exist in the repository."
-            exit 1
-          fi
+            # Install Docker Compose
+            if ! command -v docker-compose &> /dev/null; then
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+            fi
 
-          # 3. Verify the commit is actually contained in the given branch.
-          if ! git merge-base --is-ancestor "${COMMIT}" "origin/${BRANCH}"; then
-            echo "::error::Commit '${COMMIT}' does not belong to branch '${BRANCH}'."
-            exit 1
-          fi
-
-          echo "Verified: commit ${COMMIT} exists and belongs to branch ${BRANCH}." | tee -a "$GITHUB_STEP_SUMMARY"
-
-      - name: Prevent rebuilding a released commit
-        env:
-          TARGET_COMMIT: ${{ github.event.inputs.commit || github.sha }}
-        run: |
-          set -euo pipefail
-
-          # Ensure release tags are available locally.
-          git fetch --quiet --tags origin
-
-          # A commit is considered "released" only if a semver tag (optionally
-          # prefixed with 'v') points directly at it.
-          RELEASE_TAG="$(
-            git tag --points-at "$TARGET_COMMIT" |
-              awk '/^v?[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }'
-          )"
-          if [[ -n "$RELEASE_TAG" ]]; then
-            echo "::error::Commit ${TARGET_COMMIT} was already released as ${RELEASE_TAG}. Reuse the existing artifact instead of rebuilding it."
-            exit 1
-          fi
-
-          echo "Commit ${TARGET_COMMIT} has not been released; proceeding."
-
-      - name: Summary
-        env:
-          ARTIFACT_TYPE: ${{ github.event.inputs.artifactType || 'SNAPSHOT' }}
-          COMMIT: ${{ github.event.inputs.commit || github.sha }}
-          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
-        run: |
-          {
-            echo "### Build and Deploy summary"
-            echo ""
-            echo "- **Trigger:** ${{ github.event_name }}"
-            echo "- **Artifact type:** ${ARTIFACT_TYPE}"
-            echo "- **Commit:** ${COMMIT}"
-            echo "- **Branch:** ${BRANCH}"
-          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Deploy using Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/app
+            docker-compose down -v
+            # Remove any unused Docker images (cleaning up old images)
+            docker image prune -af
+            docker-compose up -d --build
