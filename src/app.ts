@@ -17,6 +17,12 @@ app.use(bodyParser.json()); // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 // Use cookie-parser middleware
 app.use(cookieParser());
+
+// ALB / deploy health probe — unauthenticated, before CSRF/auth
+app.get('/health', (_req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 // Custom CORS middleware
 const allowedOrigins = ["http://localhost:4200", "https://projectparadox.in"];
 app.use(

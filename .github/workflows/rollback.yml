@@ -1,0 +1,36 @@
+name: Rollback (blue-green)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  rollback:
+    name: Switch traffic to previous slot
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+      NAME_PREFIX: ${{ vars.NAME_PREFIX || 'paradox-production' }}
+      PROJECT_PREFIX: ${{ vars.PROJECT_PREFIX || '/paradox' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Rollback
+        run: |
+          chmod +x scripts/blue-green.sh
+          ./scripts/blue-green.sh rollback
